@@ -1,18 +1,21 @@
 #include <Time.h>
 #include <Servo.h>
+//#include <StackArray.h>
 
-time_t systime = 0;
-int i = 0;
-int d = 0;
+time_t starttime = now();
+
 int values[1024];
-int times[1024];
-int total;
+
+int count = 0;
+int sum = 0;
 
 int goodState=0;
 int badState=0;
 
-const int buttonGood = 30;
-const int buttonBad = 31;
+//StackArray int stack; 
+
+const int buttonGood = 32;
+const int buttonBad = 33;
 
 void setup() {
 
@@ -27,65 +30,139 @@ void setup() {
   pinMode(buttonBad,INPUT);
 
   Serial.begin(9600);
-  values[0] = 1;
-  values[1] = -1;
-  values[2] = 1;
-  values[3] = -1;
-  values[4] = 1;
-  values[5] = -1;
-  values[6] = 1;
-  values[7] = -1;
-  values[8] = 1;
-  values[9] = -1;
-  times[0]  = 1000;
-  times[1]  = 1000;
-  times[2]  = 2000;
-  times[3]  = 3000;
-  times[4]  = 4000;
-  times[5]  = 4100;
-  times[6]  = 4200;
-  times[7]  = 4300;
-  times[8]  = 4400;
-  times[9]  = 4500;
-  i=9;
 
 }
 
 void loop() {
+  
   goodState = digitalRead(buttonGood);
   badState  = digitalRead(buttonBad);
 
   if (goodState == HIGH || badState == HIGH) {
+    //  to be completed with RTC
+    if (goodState == HIGH) {
+      values[count] = 1;
+      count++;
+    } else if (badState == HIGH) {
+      values[count] = -1;
+      count++;
+    }
+    
     computeMood();
-    total+=1;
-    lightLED(total);
+    lightAction();
+    
+    lightLED();
   }
-
-  delay(15); 
+  delay(15);
+//  testLED();
+  
 }
 
 
 void computeMood() {
   Serial.println("Starting calc");
-  for (int j=0;j<i;j++) {
-    int d = (systime - times[j])/3600;
-    total += values[j] / d;
-    Serial.println(total);
+  
+  sum = 0;
+  
+  for (int j=0;(values[j]==1 || values[j] == -1);j++) {
+    //d = ( now() - starttime ) / 3600;
+    sum += values[j];
+    Serial.println(sum);
   }
+  
 }
 
 
-void lightLED(int value) {
+void lightLED() {
+  float tcalc = (float(sum) / float(count) );
 
-  for (int j=2;j<7;j++) {
+  Serial.print("Summe: ");
+  Serial.println(sum);
+  
+  Serial.print("Anzahl: ");
+  Serial.println(count);
+  
+    
+  Serial.print("Divisor: ");
+  Serial.println(tcalc);
+    
+  int calc = int(tcalc * 100);
+  
+  Serial.print("Divisor * 100: ");
+  Serial.println(calc);
+  
+  if (calc<24 && calc > -24) {
+  
+    resetLED();
+    
+  } else if (calc >= 24) {
+    Serial.print(">24");
+    digitalWrite(5,HIGH);
+  
+    if (calc >= 49) {
+    Serial.print(">49");
+      digitalWrite(6,HIGH);
+      
+      if (calc >= 74) {
+            Serial.print(">74");
+        digitalWrite(7,HIGH);
+      }
+      
+    } 
+    
+  } else if (calc <= -24 ) {
+    
+    digitalWrite(4,HIGH);
+    Serial.print("<24");
+    if (calc <= -49) {
+      Serial.print("<49");
+      digitalWrite(3,HIGH);
+      
+      if (calc <= -74) {
+        Serial.print("<74");
+        digitalWrite(2,HIGH);
+      }
+      
+    }
+  } 
+
+}
+
+void lightAction() {
+  for (int j=2;j<=8;j++) {
+
+    digitalWrite(j,HIGH);  
+  }
+  delay(600);
+  resetLED();
+/*  delay(600);
+
+for (int j=2;j<=8;j++) {
+
+    digitalWrite(j,HIGH);  
+  }
+  delay(600);
+  resetLED();
+  delay(600);
+
+for (int j=2;j<=8;j++) {
+
+    digitalWrite(j,HIGH);  
+  }
+  delay(600);
+  resetLED(); */
+}
+
+void resetLED() {
+for (int j=2;j<=8;j++) {
 
     digitalWrite(j,LOW);  
   }
-
-  for (int j=1;j<=value;j++) {
-
-    digitalWrite(j+1,HIGH);
-  }
-
 }
 
+void testLED() {
+for (int j=2;j<=8;j++) {
+
+    digitalWrite(j,HIGH);  
+}
+}

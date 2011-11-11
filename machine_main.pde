@@ -8,8 +8,6 @@ int values[1024];
 int times[1024];
 int total;
 
-Servo myservo;
-
 int goodState=0;
 int badState=0;
 
@@ -51,8 +49,6 @@ void setup() {
   times[9]  = 4500;
   i=9;
 
-  myservo.attach(10);  
-
 }
 
 void loop() {
@@ -64,8 +60,7 @@ void loop() {
     total+=1;
     lightLED(total);
   }
-  //Serial.println(myservo.read());
-  //myservo.write(2);
+
   delay(15); 
 }
 

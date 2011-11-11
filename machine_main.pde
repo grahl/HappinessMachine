@@ -12,6 +12,8 @@ int sum = 0;
 int goodState=0;
 int badState=0;
 
+Servo myservo; 
+
 //StackArray int stack; 
 
 const int buttonGood = 32;
@@ -28,7 +30,8 @@ void setup() {
 
   pinMode(buttonGood,INPUT);
   pinMode(buttonBad,INPUT);
-
+ 
+ 
   Serial.begin(9600);
 
 }
@@ -49,7 +52,7 @@ void loop() {
     }
     
     computeMood();
-    lightAction();
+    ActionTime();
     
     lightLED();
   }
@@ -128,30 +131,25 @@ void lightLED() {
 
 }
 
-void lightAction() {
-  for (int j=2;j<=8;j++) {
-
-    digitalWrite(j,HIGH);  
-  }
-  delay(600);
+void ActionTime() {
+  myservo.attach(10);
+  myservo.write(60);
+  flowLEDs(); 
+  delay(2000);
+  flowLEDs();
+  delay(2000);
   resetLED();
-/*  delay(600);
-
-for (int j=2;j<=8;j++) {
-
-    digitalWrite(j,HIGH);  
-  }
-  delay(600);
-  resetLED();
-  delay(600);
-
-for (int j=2;j<=8;j++) {
-
-    digitalWrite(j,HIGH);  
-  }
-  delay(600);
-  resetLED(); */
+  myservo.detach();
 }
+
+void flowLEDs() {
+  resetLED();
+  for (int j=2;j<=8;j++) {
+    digitalWrite(j,HIGH);  
+    delay(50);
+  }
+}
+
 
 void resetLED() {
 for (int j=2;j<=8;j++) {

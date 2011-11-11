@@ -1,12 +1,5 @@
 #include <Time.h>
-
-
-pinMode(2, OUTPUT);
-pinMode(3, OUTPUT);
-pinMode(4, OUTPUT);
-pinMode(5, OUTPUT);
-pinMode(6, OUTPUT);
-pinMode(7, OUTPUT);
+#include <Servo.h>
 
 time_t systime = 0;
 int i = 0;
@@ -15,8 +8,26 @@ int values[1024];
 int times[1024];
 int total;
 
+Servo myservo;
+
+int goodState=0;
+int badState=0;
+
+const int buttonGood = 30;
+const int buttonBad = 31;
 
 void setup() {
+
+  pinMode(2, OUTPUT);
+  pinMode(3, OUTPUT);
+  pinMode(4, OUTPUT);
+  pinMode(5, OUTPUT);
+  pinMode(6, OUTPUT);
+  pinMode(7, OUTPUT);
+
+  pinMode(buttonGood,INPUT);
+  pinMode(buttonBad,INPUT);
+
   Serial.begin(9600);
   values[0] = 1;
   values[1] = -1;
@@ -39,29 +50,47 @@ void setup() {
   times[8]  = 4400;
   times[9]  = 4500;
   i=9;
+
+  myservo.attach(10);  
+
 }
 
 void loop() {
-  delay(2000);
+  goodState = digitalRead(buttonGood);
+  badState  = digitalRead(buttonBad);
+
+  if (goodState == HIGH || badState == HIGH) {
+    computeMood();
+    total+=1;
+    lightLED(total);
+  }
+  //Serial.println(myservo.read());
+  //myservo.write(2);
+  delay(15); 
+}
+
+
+void computeMood() {
   Serial.println("Starting calc");
-  for (int j=0; j++; j>i) {
+  for (int j=0;j<i;j++) {
     int d = (systime - times[j])/3600;
     total += values[j] / d;
     Serial.println(total);
   }
-  total=6;
-  lightLED(total);
 }
 
 
 void lightLED(int value) {
 
-  for (int j=2;j++;j=6) {
+  for (int j=2;j<7;j++) {
+
     digitalWrite(j,LOW);  
   }
 
-  for (int j=1;j++;j=value) {
-    digitalWrite(j,HIGH);
+  for (int j=1;j<=value;j++) {
+
+    digitalWrite(j+1,HIGH);
   }
 
 }
+

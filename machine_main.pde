@@ -1,11 +1,19 @@
 #include <Time.h>
 
+
+pinMode(2, OUTPUT);
+pinMode(3, OUTPUT);
+pinMode(4, OUTPUT);
+pinMode(5, OUTPUT);
+pinMode(6, OUTPUT);
+pinMode(7, OUTPUT);
+
 time_t systime = 0;
 int i = 0;
 int d = 0;
 int values[1024];
 int times[1024];
-float total;
+int total;
 
 
 void setup() {
@@ -40,6 +48,20 @@ void loop() {
     int d = (systime - times[j])/3600;
     total += values[j] / d;
     Serial.println(total);
+  }
+  total=6;
+  lightLED(total);
+}
+
+
+void lightLED(int value) {
+
+  for (int j=2;j++;j=6) {
+    digitalWrite(j,LOW);  
+  }
+
+  for (int j=1;j++;j=value) {
+    digitalWrite(j,HIGH);
   }
 
 }

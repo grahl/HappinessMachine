@@ -12,3 +12,4 @@ Todo:
 
 * Add 16x24 matrix code
 * Add discounting code to offset Monday mornings 
+* make the code not suck

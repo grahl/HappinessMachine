@@ -1,6 +1,13 @@
 #include <Time.h>
 #include <Servo.h>
-//#include <StackArray.h>
+#include "HT1632.h"
+
+#define DATA 2
+#define WR   3
+#define CS   4
+#define CS2  5
+
+HT1632LEDMatrix matrix = HT1632LEDMatrix(DATA, WR, CS);
 
 time_t starttime = now();
 
@@ -34,6 +41,10 @@ void setup() {
  
   Serial.begin(9600);
 
+  matrix.begin(HT1632_COMMON_16NMOS);  
+  matrix.fillScreen();
+  delay(500);
+
 }
 
 void loop() {
@@ -58,7 +69,46 @@ void loop() {
   }
   delay(15);
 //  testLED();
+ 
+
+
+matrix.clearScreen(); 
+   // draw a pixel!
+  //matrix.drawPixel(0, 0, 1);
+  matrix.drawPixel(7, 6, 1);  
+  matrix.drawPixel(7, 7, 1);  
+  matrix.drawPixel(7, 8, 1);
+  matrix.drawPixel(8, 5, 1);
+  matrix.drawPixel(8, 9, 1);
+  matrix.drawPixel(9, 4, 1);
+  matrix.drawPixel(9, 10, 1);
+  matrix.drawPixel(9, 13, 1);
+  matrix.drawPixel(10, 4, 1);
+  matrix.drawPixel(10,10, 1);
+  matrix.drawPixel(10,12, 1);
+  matrix.drawPixel(11, 3, 1);
+  matrix.drawPixel(11,10, 1);
+  matrix.drawPixel(12, 3, 1);
+  matrix.drawPixel(12,10, 1);
+  matrix.drawPixel(13, 3, 1);
+  matrix.drawPixel(13,10, 1);
+  matrix.drawPixel(14, 4, 1);
+  matrix.drawPixel(14,10, 1);
+  matrix.drawPixel(15, 5, 1);
+  matrix.drawPixel(15,10, 1);
   
+  
+  matrix.writeScreen();
+  
+  delay(500);
+   // clear a pixel!
+  matrix.drawPixel(0, 0, 0);
+  matrix.drawPixel(11, 3, 0);
+  matrix.drawPixel(12, 3, 0);
+  matrix.drawPixel(13, 3, 0);
+  matrix.writeScreen();
+  delay(2000);
+
 }
 
 
